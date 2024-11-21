@@ -10,11 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { createFilter } from "vite";
 import { transformAsync } from "@babel/core";
 import babelPluginReactIntl from "babel-plugin-lp-react-intl"; // 引入自动国际化插件
-export default function myVitePlugin({ include = ["src/**/*.{js,jsx,ts,tsx}"], exclude = [], } = {}) {
+export default function vitePluginLpReactIntl({ include = ["src/**/*.{js,jsx,ts,tsx}"], exclude = [], } = {}) {
     // 只处理 .js, .jsx, .ts, .tsx 文件，排除 excludeFiles 中的文件
     const filter = createFilter(include, exclude); // 只匹配 src 目录下的 .js, .jsx, .ts, .tsx 文件
     return {
-        name: "vite-plugin-babel-react-intl",
+        name: "vite-plugin-lp-react-intl",
         enforce: "pre", // 在 vite 的默认插件之前执行，如babel，esbuild，swc 转换之前调用
         transform(code, id) {
             return __awaiter(this, void 0, void 0, function* () {

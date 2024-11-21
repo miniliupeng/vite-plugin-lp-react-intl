@@ -1,5 +1,5 @@
 import { PluginOption } from "vite";
-export default function myVitePlugin({ include, exclude, }?: {
+export default function vitePluginLpReactIntl({ include, exclude, }?: {
     include?: string[];
     exclude?: string[];
 }): PluginOption;
