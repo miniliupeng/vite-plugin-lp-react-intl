@@ -8,8 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { createFilter } from "vite";
-import { transformAsync } from "@babel/core";
-import babelPluginReactIntl from "babel-plugin-lp-react-intl"; // 引入自动国际化插件
+import { transformSync } from "@babel/core";
+import babelPluginLpReactIntl from "babel-plugin-lp-react-intl"; // 引入自动国际化插件
+import prettier from "prettier";
 export default function vitePluginLpReactIntl({ include = ["src/**/*.{js,jsx,ts,tsx}"], exclude = [], } = {}) {
     // 只处理 .js, .jsx, .ts, .tsx 文件，排除 excludeFiles 中的文件
     const filter = createFilter(include, exclude); // 只匹配 src 目录下的 .js, .jsx, .ts, .tsx 文件
@@ -21,15 +22,18 @@ export default function vitePluginLpReactIntl({ include = ["src/**/*.{js,jsx,ts,
                 if (!filter(id))
                     return null; // 跳过不匹配的文件
                 // 使用 Babel 进行代码转换，注入我们的插件
-                const result = yield transformAsync(code, {
-                    filename: id,
-                    plugins: [babelPluginReactIntl()],
+                const res = transformSync(code, {
+                    plugins: [babelPluginLpReactIntl],
+                    retainLines: true,
                     presets: ["@babel/preset-typescript"],
-                    sourceMaps: true,
+                    filename: id
+                });
+                const formatedCode = yield prettier.format(res === null || res === void 0 ? void 0 : res.code, {
+                    filepath: id,
                 });
                 return {
-                    code: (result === null || result === void 0 ? void 0 : result.code) || code,
-                    map: (result === null || result === void 0 ? void 0 : result.map) || null,
+                    code: formatedCode || code,
+                    map: (res === null || res === void 0 ? void 0 : res.map) || null,
                 };
             });
         },

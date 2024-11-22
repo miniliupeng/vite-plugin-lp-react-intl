@@ -1,6 +1,7 @@
 import { createFilter, PluginOption } from "vite";
-import { transformAsync } from "@babel/core";
-import babelPluginReactIntl from "babel-plugin-lp-react-intl"; // 引入自动国际化插件
+import { transformSync } from "@babel/core";
+import babelPluginLpReactIntl from "babel-plugin-lp-react-intl"; // 引入自动国际化插件
+import prettier from "prettier";
 
 export default function vitePluginLpReactIntl({
   include = ["src/**/*.{js,jsx,ts,tsx}"],
@@ -14,16 +15,21 @@ export default function vitePluginLpReactIntl({
     async transform(code, id) {
       if (!filter(id)) return null; // 跳过不匹配的文件
       // 使用 Babel 进行代码转换，注入我们的插件
-      const result = await transformAsync(code, {
-        filename: id,
-        plugins: [babelPluginReactIntl()],
+
+      const res = transformSync(code, {
+        plugins: [babelPluginLpReactIntl],
+        retainLines: true,
         presets: ["@babel/preset-typescript"],
-        sourceMaps: true,
+        filename: id
+      });
+
+      const formatedCode = await prettier.format(res?.code!, {
+        filepath: id,
       });
 
       return {
-        code: result?.code || code,
-        map: result?.map || null,
+        code: formatedCode || code,
+        map: res?.map || null,
       };
     },
   };
